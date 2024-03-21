@@ -28,6 +28,7 @@ class JwtTokenGatewayIntTest {
 		final Long userId = 15L;
 		
 		final String token = generateToken(userId, secret);
+		System.out.println(token);
 		
 		TokenGateway tokenGateway = new JwtTokenGateway(secret);
 		
