@@ -3,6 +3,7 @@ package br.com.pupposoft.fiap.sgp.registroponto.gateway.lambda;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
@@ -72,15 +73,21 @@ public class Entrypoint implements RequestHandler<Object, ResponseJson> {
 	}
 	
 	private String getToken(String input) {
-		List<String> inputs = Arrays.asList(input.split(", "));
+		List<String> inputs = Arrays.asList(input.split("Authorization="));
 		
-		String headers = inputs.stream().filter(i -> i.contains("headers=")).findAny().orElseThrow();
-		String[] authorization = headers.split("Authorization=");
+		String token = inputs.stream().filter(i -> i.contains("bearer")).findAny().orElseThrow();
+		List<String> authorization = Arrays.asList(token.split(", "));
 		
-		if(authorization.length == 0) {
+		Optional<String> tokenOp = authorization.stream().filter(i -> i.contains("bearer")).findAny();
+		
+		if(tokenOp.isEmpty()) {
 			throw new RuntimeException("Token não informado");//NOSONAR
 		}
 		
-		return authorization[1].substring(0, authorization[1].length()-1);
+		return tokenOp.get()
+				.replace("bearer", "")
+				.replace("Bearer", "")
+				.replace("BEARER", "")
+				.trim();
 	}
 }
