@@ -1,6 +1,7 @@
 package br.com.pupposoft.fiap.sgp.registroponto.domain;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import lombok.Getter;
 
@@ -11,7 +12,7 @@ public class Ponto {
 	
 	public Ponto(Long userId) {
 		this.userId = userId;
-		dataHora = LocalDateTime.now();
+		dataHora = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 	}
 	
 }
